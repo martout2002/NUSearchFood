@@ -2,6 +2,7 @@ import "../App.css";
 
 import React from "react";
 import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
 
 const BasicThreadList: React.FC = () => {
     return (
@@ -9,7 +10,7 @@ const BasicThreadList: React.FC = () => {
             <h4>{"Welcome to my forum!"}</h4>
             <ul>
                 <li>
-                    <Link to="/thread/1">{"Inspirational Quotes"}</Link>
+                    <Link to="/thread/1">{<Button variant="contained">Inspirational Quotes</Button>}</Link>
                     {" by Aiken"}
                 </li>
             </ul>
