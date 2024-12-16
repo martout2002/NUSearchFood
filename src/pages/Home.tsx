@@ -1,5 +1,6 @@
 import BasicThreadList from "../components/BasicThreadList";
 import AppBar from "../components/AppBar";
+import FoodReviews from "../components/FoodReviews";
 import React from "react";
 
 const Home: React.FC = () => {
@@ -11,6 +12,9 @@ const Home: React.FC = () => {
             </h3>
             <br />
             <BasicThreadList />
+            <div>
+                <FoodReviews />
+            </div>
         </>
     );
 };

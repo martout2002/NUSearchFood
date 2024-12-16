@@ -14,6 +14,10 @@ type Props = {
     styled: boolean;
 };
 const useStyles = makeStyles(() => ({
+    commentTitle: {
+        fontSize: 24,
+        fontWeight: "bold",
+    },
     commentBody: {
         fontSize: 20,
         whiteSpace: "pre-wrap",
@@ -34,7 +38,10 @@ const CommentItem: React.FC<Props> = ({ comment, styled }) => {
         return (
             <Card className={classes.commentCard} sx={{ textAlign: "left" }}>
                 <CardContent>
-                    <Stack spacing={2}>
+                    <Stack spacing={1}>
+                        <Typography variant="h6" color="textPrimary" className={classes.commentTitle} gutterBottom>
+                            {comment.title}
+                        </Typography>
                         <Typography variant="body2" color="textPrimary" className={classes.commentBody} component="p">
                             {comment.body}
                         </Typography>
@@ -45,6 +52,9 @@ const CommentItem: React.FC<Props> = ({ comment, styled }) => {
                             <FavoriteBorderIcon />
                             <Divider />
                             <CommentIcon />
+                            {
+                                //todo: add comment count //todo: add like count //todo: add location icon
+                            }
                         </Box>
                     </Stack>
                 </CardContent>
