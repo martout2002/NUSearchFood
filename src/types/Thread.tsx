@@ -1,4 +1,4 @@
-type FoodReview = {
+type Thread = {
     id: number;
     title: string;
     store_name: string;
@@ -9,4 +9,4 @@ type FoodReview = {
     comments: string;
 };
 
-export default FoodReview;
+export default Thread;

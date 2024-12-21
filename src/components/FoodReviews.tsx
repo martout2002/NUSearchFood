@@ -1,8 +1,5 @@
-import FoodReview from "../types/FoodReview";
-
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import axios, { isAxiosError } from "axios";
-
 import { Card, CardContent, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -10,8 +7,8 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import CommentIcon from "@mui/icons-material/Comment";
+import Thread from "../types/Thread";
 
-//When I deploy, this API url will be different
 const API_URL = process.env.REACT_APP_API_URL;
 
 const useStyles = makeStyles(() => ({
@@ -20,7 +17,7 @@ const useStyles = makeStyles(() => ({
         fontWeight: "bold",
     },
     reviewBody: {
-        fontSize: 10,
+        fontSize: 14,
         whiteSpace: "pre-wrap",
         paddingBottom: "1em",
     },
@@ -32,29 +29,35 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const FoodReviews: React.FC = () => {
-    const [foodReviews, setFoodReviews] = useState<FoodReview[]>([]);
+const FoodReviews = forwardRef((_, ref) => {
+    const [foodReviews, setFoodReviews] = useState<Thread[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const classes = useStyles();
 
-    useEffect(() => {
-        const fetchFoodReviews = async () => {
-            try {
-                const response = await axios.get<FoodReview[]>(`${API_URL}/api/threads`);
-                setFoodReviews(response.data);
-                setLoading(false);
-            } catch (err: unknown) {
-                // Narrow the type of error to AxiosError or another known type
-                if (isAxiosError(err)) {
-                    setError(err.response?.data?.message || "Failed to fetch food reviews");
-                } else {
-                    setError("An unexpected error occurred");
-                }
-                setLoading(false);
+    // Function to fetch food reviews
+    const fetchFoodReviews = async () => {
+        try {
+            const response = await axios.get<Thread[]>(`${API_URL}/api/threads`);
+            setFoodReviews(response.data);
+            setLoading(false);
+        } catch (err: unknown) {
+            if (isAxiosError(err)) {
+                setError(err.response?.data?.message || "Failed to fetch food reviews");
+            } else {
+                setError("An unexpected error occurred");
             }
-        };
+            setLoading(false);
+        }
+    };
 
+    // Expose fetchFoodReviews to parent via ref
+    useImperativeHandle(ref, () => ({
+        fetchFoodReviews,
+    }));
+
+    // Fetch food reviews when the component loads
+    useEffect(() => {
         fetchFoodReviews();
     }, []);
 
@@ -67,7 +70,7 @@ const FoodReviews: React.FC = () => {
     }
 
     return (
-        <div style={{ margin: "2rem" }}>
+        <>
             {foodReviews.map((review) => (
                 <Card key={review.id} className={classes.reviewCard} sx={{ textAlign: "left" }}>
                     <CardContent>
@@ -84,7 +87,12 @@ const FoodReviews: React.FC = () => {
                                 {review.details}
                             </Typography>
                             <Typography color="textSecondary" className={classes.metadata} gutterBottom>
-                                {"Posted by " + review.author_name}
+                                {"Posted by " +
+                                    review.author_name +
+                                    " at " +
+                                    review.store_name +
+                                    ", " +
+                                    review.store_location}
                             </Typography>
                             <Box display="flex" alignItems="center" gap={1}>
                                 <FavoriteBorderIcon />
@@ -97,41 +105,10 @@ const FoodReviews: React.FC = () => {
                     </CardContent>
                 </Card>
             ))}
-        </div>
+        </>
     );
-};
-//         <div style={{ margin: "2rem" }}>
-//             <h1>Food Reviews</h1>
-//             <table border={1} style={{ width: "100%", borderCollapse: "collapse" }}>
-//                 <thead>
-//                     <tr>
-//                         <th>ID</th>
-//                         <th>Title</th>
-//                         <th>Store Name</th>
-//                         <th>Store Location</th>
-//                         <th>Author Name</th>
-//                         <th>Details</th>
-//                         <th>Rating</th>
-//                         <th>Comments</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody>
-//                     {foodReviews.map((review) => (
-//                         <tr key={review.id}>
-//                             <td>{review.id}</td>
-//                             <td>{review.title}</td>
-//                             <td>{review.store_name}</td>
-//                             <td>{review.store_location}</td>
-//                             <td>{review.author_name}</td>
-//                             <td>{review.details}</td>
-//                             <td>{review.rating.toFixed(1)}</td>
-//                             <td>{review.comments}</td>
-//                         </tr>
-//                     ))}
-//                 </tbody>
-//             </table>
-//         </div>
-//     );
-// };
+});
+
+FoodReviews.displayName = "FoodReviews";
 
 export default FoodReviews;
