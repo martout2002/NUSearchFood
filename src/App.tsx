@@ -1,32 +1,42 @@
 import Home from "./pages/Home";
-import BasicThreadView from "./pages/BasicThreadView";
-import StyledThreadView from "./pages/StyledThreadView";
-import React from "react";
-import "./App.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { blue, orange } from "@mui/material/colors";
-
-const theme = createTheme({
-    palette: {
-        primary: blue,
-        secondary: orange,
-    },
-});
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Signup";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 const App: React.FC = () => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        // Check if the user is authenticated (e.g., token exists in localStorage)
+        const token = localStorage.getItem("authToken");
+        setIsAuthenticated(!!token); // Set to true if token exists
+    }, []);
+
     return (
-        <div className="App">
-            <ThemeProvider theme={theme}>
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/thread/1" element={<BasicThreadView />} />
-                        <Route path="/thread/1/styled" element={<StyledThreadView />} />
-                        <Route path="/" element={<Home />} />
-                    </Routes>
-                </BrowserRouter>
-            </ThemeProvider>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route
+                    path="/"
+                    element={isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />}
+                />
+
+                <Route
+                    path="/login"
+                    element={
+                        <LoginPage
+                            onLogin={() => {
+                                setIsAuthenticated(true);
+                            }}
+                        />
+                    }
+                />
+
+                <Route path="/signup" element={<SignupPage />} />
+
+                <Route path="/home" element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} />
+            </Routes>
+        </BrowserRouter>
     );
 };
 

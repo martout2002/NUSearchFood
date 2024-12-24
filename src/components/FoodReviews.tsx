@@ -1,39 +1,20 @@
-import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
-import axios, { isAxiosError } from "axios";
-import { Card, CardContent, Typography } from "@mui/material";
-import { makeStyles } from "@mui/styles";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import Divider from "@mui/material/Divider";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-import CommentIcon from "@mui/icons-material/Comment";
+import DeleteButton from "./DeleteButton"; // Import the delete button component
 import Thread from "../types/Thread";
+import useFoodReviewsStyle from "../styles/FoodReviewsStyle"; // Import styles
+import axios, { isAxiosError } from "axios";
+import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
+import { Card, CardContent, Typography, Box, Divider, Stack } from "@mui/material";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import CommentIcon from "@mui/icons-material/Comment";
 
 const API_URL = process.env.REACT_APP_API_URL;
-
-const useStyles = makeStyles(() => ({
-    reviewTitle: {
-        fontSize: 24,
-        fontWeight: "bold",
-    },
-    reviewBody: {
-        fontSize: 14,
-        whiteSpace: "pre-wrap",
-        paddingBottom: "1em",
-    },
-    reviewCard: {
-        marginBottom: "1em",
-    },
-    metadata: {
-        fontSize: 14,
-    },
-}));
 
 const FoodReviews = forwardRef((_, ref) => {
     const [foodReviews, setFoodReviews] = useState<Thread[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    const classes = useStyles();
+    const [currentUser, setCurrentUser] = useState<string | null>(null); // Store logged-in username
+    const classes = useFoodReviewsStyle(); // Use imported styles
 
     // Function to fetch food reviews
     const fetchFoodReviews = async () => {
@@ -56,9 +37,13 @@ const FoodReviews = forwardRef((_, ref) => {
         fetchFoodReviews,
     }));
 
-    // Fetch food reviews when the component loads
+    // Fetch food reviews and current user's username when the component loads
     useEffect(() => {
         fetchFoodReviews();
+
+        // Retrieve the logged-in user's username from localStorage
+        const username = localStorage.getItem("username");
+        setCurrentUser(username); // Store the username in state
     }, []);
 
     if (loading) {
@@ -101,6 +86,12 @@ const FoodReviews = forwardRef((_, ref) => {
                                 <Typography variant="body2">Comments: {review.comments}</Typography>
                                 <Typography variant="body2">Rating: {review.rating}</Typography>
                             </Box>
+                            {/* Delete Button: Only visible if the current user is the author */}
+                            {currentUser === review.author_name && (
+                                <Box display="flex" justifyContent="flex-end">
+                                    <DeleteButton threadId={review.id} onDelete={fetchFoodReviews} />
+                                </Box>
+                            )}
                         </Stack>
                     </CardContent>
                 </Card>
