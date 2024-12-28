@@ -1,4 +1,5 @@
 import DeleteButton from "./DeleteButton"; // Import the delete button component
+import LikeButton from "./LikeButton";
 import Thread from "../types/Thread";
 import useFoodReviewsStyle from "../styles/FoodReviewsStyle"; // Import styles
 import axios, { isAxiosError } from "axios";
@@ -86,6 +87,11 @@ const FoodReviews = forwardRef((_, ref) => {
                                 <Typography variant="body2">Comments: {review.comments}</Typography>
                                 <Typography variant="body2">Rating: {review.rating}</Typography>
                             </Box>
+                            <Divider />
+                            <Box display="flex" alignItems="center" gap={1}>
+                                <LikeButton threadId={review.id} initialLikes={review.likes} />
+                            </Box>
+                            <Divider />
                             {/* Delete Button: Only visible if the current user is the author */}
                             {currentUser === review.author_name && (
                                 <Box display="flex" justifyContent="flex-end">

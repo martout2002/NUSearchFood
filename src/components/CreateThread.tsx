@@ -14,6 +14,7 @@ const CreateThread: React.FC<{ onThreadCreated: () => void }> = ({ onThreadCreat
         author_name: "", // Author will be set automatically
         details: "",
         rating: "",
+        likes: 0,
     });
 
     const [success, setSuccess] = useState<string | null>(null);
@@ -55,6 +56,7 @@ const CreateThread: React.FC<{ onThreadCreated: () => void }> = ({ onThreadCreat
                 author_name: formData.author_name, // Retain the logged-in username
                 details: "",
                 rating: "",
+                likes: 0,
             });
 
             // Trigger the parent refresh
