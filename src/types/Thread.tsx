@@ -7,7 +7,7 @@ type Thread = {
     details: string;
     rating: number;
     comments: string;
-    likes: number;
+    likes: string[];
 };
 
 export default Thread;

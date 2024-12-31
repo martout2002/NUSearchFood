@@ -1,21 +1,20 @@
 import { makeStyles } from "@mui/styles";
 
-const useFoodReviewsStyle = makeStyles(() => ({
+const useFoodReviewsStyle = makeStyles({
+    reviewCard: {
+        marginBottom: "1rem",
+        padding: "1rem",
+    },
     reviewTitle: {
-        fontSize: 24,
         fontWeight: "bold",
     },
     reviewBody: {
-        fontSize: 14,
-        whiteSpace: "pre-wrap",
-        paddingBottom: "1em",
-    },
-    reviewCard: {
-        marginBottom: "1em",
+        margin: "0.5rem 0",
     },
     metadata: {
-        fontSize: 14,
+        fontSize: "0.875rem",
+        color: "#757575",
     },
-}));
+});
 
 export default useFoodReviewsStyle;
